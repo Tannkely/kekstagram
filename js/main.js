@@ -12,4 +12,4 @@ const comment = 'В этом комментарии должно быть око
 const secondComment = 'В этом комментарии меньше 140 символов ';
 checkMaxStringValue(comment, 140);
 checkMaxStringValue(secondComment, 140);
-getRandomInt(0, 1);
+getRandomInt(0, 1); 
