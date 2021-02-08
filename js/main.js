@@ -5,7 +5,7 @@ const getRandomInt = function (min, max) {
 };
 
 const  checkMaxStringValue = function (str, max)  {
-  return str.length <= max ? true : false;
+  return str.length <= max;
 };
 
 const comment = 'В этом комментарии должно быть около 140 символов, а  на самом деле должно быть больше, чтобы проверить работоспособность функции... 140 символов оказывается довольно большой текст и нужно что-то придумывать'
