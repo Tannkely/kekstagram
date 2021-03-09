@@ -48,7 +48,7 @@ const getRandomInt = function (min, max) {
 };
 
 const  checkMaxStringValue = function (str, max)  {
-  return str.length <= max ? true : false;
+  return str.length <= max;
 };
 
 checkMaxStringValue ('asdasdasd', 5);
