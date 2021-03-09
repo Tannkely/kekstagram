@@ -1,20 +1,30 @@
-const getRandomNumber = (a = 0, b = 0) => {
-  const min = Math.ceil(Math.min(a, b));
-  const max = Math.floor(Math.max(a, b));
+const getRandomInt = function (min, max) {
 
-  // * Another solution
-  // const min = Math.ceil((a < b) ? a : b);
-  // const max = Math.floor((a >= b) ? a : b);
-
-  if (min < 0) {
-    return NaN;
+  if (min < 0 || max < 0) {
+    return
   }
 
-  return Math.floor(Math.random() * (max - min + 1) + min);
+  if (max < min) {
+    [min, max] = [max, min];
+  }
+
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-// *** Check Max String Length
 
-const checkMaxLength = (value = '', maxLength = 140) => value.length <= maxLength;
+const  checkMaxStringValue = function (str, max)  {
+  return str.length <= max ? true : false;
+};
 
-export { getRandomNumber, checkMaxLength };
+checkMaxStringValue ('asdasdasd', 5);
+
+
+const getRandomArrayEl = function(arr) {
+  return arr[getRandomInt(0, arr.length - 1)];
+};
+
+export {
+  getRandomInt,
+  checkMaxStringValue,
+  getRandomArrayEl
+}

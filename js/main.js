@@ -1,2 +1,3 @@
-import { photosDescr } from './photos-descr.js';
-photosDescr;
+import './util.js'
+import './data.js'
+import './const.js'
