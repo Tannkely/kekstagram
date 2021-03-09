@@ -1,24 +1,23 @@
-const getRandomInt = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
 
-const  checkMaxStringValue = function (str, max)  {
-  return str.length <= max;
-};
+const COMMENTATOR_NAMES = [
+  'Николай',
+  'Дмитрий',
+  'Анастасия',
+  'Артем',
+  'Анна',
+  'Эмилия',
+  'Виктор',
+  'Никита',
+  'Татьяна',
+  'Адда',
+  'Александр',
+  'Стас',
+  'Екатерина',
+  'Алеся',
+  'Алексей',
+  'Алевтина'];
 
-const comment = 'В этом комментарии должно быть около 140 символов, а  на самом деле должно быть больше, чтобы проверить работоспособность функции... 140 символов оказывается довольно большой текст и нужно что-то придумывать'
-const secondComment = 'В этом комментарии меньше 140 символов ';
-checkMaxStringValue(comment, 140);
-checkMaxStringValue(secondComment, 140);
-getRandomInt(0, 1);
-
-// *** module3-task1 Generate
-
-const ARRAY_LENGTH = 25;
-const MAX_COMMENTS_COUNT = 7;
-
-const tempNames = ['Николай', 'Дмитрий', 'Анастасия', 'Артем', 'Анна', 'Эмилия', 'Виктор', 'Никита', 'Татьяна', 'Адда', 'Александр', 'Стас', 'Екатерина', 'Алеся', 'Алексей', 'Алевтина'];
-const tempMessage = [
+const COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -26,42 +25,89 @@ const tempMessage = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
-const createNewArray = (arrLength, element, shift) => {
-  return new Array(arrLength).fill('').map((item, index) => element(index + shift));
+
+const DESCPRIPTION = [
+  'Это лучшее, что я видел за последнее время',
+  'Красота фотографии не имеет границ',
+  'Сразу видно, что есть чувство стиля',
+  'Эта фотография сделала мой день',
+  'Тебе можно позавидовать',
+];
+
+const getRandomInt = function (min, max) {
+
+  if (min < 0 || max < 0) {
+    return
+  }
+
+  if (max < min) {
+    [min, max] = [max, min];
+  }
+
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const createComment = (index) => {
-  const commentMessageLength = getRandomNumber(1, 2);
-
-  const createCommentMessage = (length) => {
-    const result = [];
-    for (let i = 1; i <= length; i++) {
-      result.push(tempMessage[getRandomNumber(0, tempMessage.length - 1)]);
-    }
-    return result.join(' ');
-  };
-
-  return {
-    id: index + getRandomNumber(1, 300),
-    avatar: `img/avatar-${getRandomNumber(1, 6)}.svg`,
-    message: createCommentMessage(commentMessageLength),
-    name: tempNames[getRandomNumber(0, tempNames.length - 1)],
-  };
+const  checkMaxStringValue = function (str, max)  {
+  return str.length <= max ? true : false;
 };
 
-const createPhotoDescr = (index) => {
-  const arrayOfCommentsLength = getRandomNumber(1, MAX_COMMENTS_COUNT);
-  const createArrayOfComments = createNewArray(arrayOfCommentsLength, createComment, 0);
+checkMaxStringValue ('asdasdasd', 5);
 
-  return {
-    id: index,
-    url: `photos/${index}.jpg`,
-    description: 'Еще одна фотография',
-    likes: getRandomNumber(15, 200),
-    comments: createArrayOfComments,
-  };
+
+const getRandomArrayEl = function(arr) {
+  return arr[getRandomInt(0, arr.length - 1)];
 };
 
-const arrayOfPhotoDescr = createNewArray(ARRAY_LENGTH, createPhotoDescr, 1);
+const getAvatarPath = function () {
+  return `img/avatar-${getRandomInt(1, 6)}.svg`
+};
 
-arrayOfPhotoDescr; // for ESLint Validation
+const idArray = [];
+
+const getUniqId = function () {
+  const rand = getRandomInt(0, 10000);
+  if (!idArray.includes(rand)) {
+    idArray.push(rand);
+  }
+  return rand;
+}
+
+const getActualCommentsStrings = function () {
+  const actualCommentsStrings = [];
+  for(let i = 0;i < getRandomInt(1, 2); i++ ) {
+    actualCommentsStrings.push(COMMENTS[getRandomInt(0, COMMENTS.length-1)])}
+  const actualComments = actualCommentsStrings.join(' ');
+  return actualComments;
+};
+
+const generateRandomCommentsArray = function () {
+  const commentsArray = [];
+  const commentsCounter = getRandomInt(1, 6);
+  for (let i = 0; i < commentsCounter; i++) {
+    const newComment = {
+      id: getUniqId(),
+      avatar: getAvatarPath(),
+      message: getActualCommentsStrings(),
+      name : getRandomArrayEl(COMMENTATOR_NAMES),
+    };
+    commentsArray.push(newComment);
+  }
+  return commentsArray;
+};
+
+const generateObjectsArray = function () {
+  const objectsArray = [];
+  for (let i = 0; i < SIMILLAR_OBJECTS_AMOUNT; i++) {
+    const newObject = {
+      id: i + 1,
+      url: `photos/${i + 1}.jpg`,
+      description: getRandomArrayEl(DESCPRIPTION),
+      likes: getRandomInt(15, 200),
+      comments: generateRandomCommentsArray(),
+    };
+    objectsArray.push(newObject);
+  }
+  return objectsArray;
+}
+
+generateObjectsArray();
