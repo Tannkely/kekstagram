@@ -87,7 +87,7 @@ const MAX_SMTH = 6;
 const generateRandomCommentsArray = function () {
   const commentsArray = [];
   // const commentsCounter = getRandomInt(1, 6);
-  const commentsCounter = getRandomInt(MIN_SMTH, MAX_SMTH)
+  const commentsCounter = getRandomInt(MIN_SMTH, MAX_SMTH);
   for (let i = 0; i < commentsCounter; i++) {
     const newComment = {
       id: getUniqId(),
