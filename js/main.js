@@ -1,3 +1,4 @@
+const SIMILLAR_OBJECTS_AMOUNT = 25;
 
 const COMMENTATOR_NAMES = [
   'Николай',
@@ -80,9 +81,13 @@ const getActualCommentsStrings = function () {
   return actualComments;
 };
 
+const MIN_SMTH = 1;
+const MAX_SMTH = 6;
+
 const generateRandomCommentsArray = function () {
   const commentsArray = [];
-  const commentsCounter = getRandomInt(1, 6);
+  // const commentsCounter = getRandomInt(1, 6);
+  const commentsCounter = getRandomInt(MIN_SMTH, MAX_SMTH)
   for (let i = 0; i < commentsCounter; i++) {
     const newComment = {
       id: getUniqId(),
@@ -95,6 +100,9 @@ const generateRandomCommentsArray = function () {
   return commentsArray;
 };
 
+const MIN_INT = 15;
+const MAX_INT = 200;
+
 const generateObjectsArray = function () {
   const objectsArray = [];
   for (let i = 0; i < SIMILLAR_OBJECTS_AMOUNT; i++) {
@@ -102,7 +110,8 @@ const generateObjectsArray = function () {
       id: i + 1,
       url: `photos/${i + 1}.jpg`,
       description: getRandomArrayEl(DESCPRIPTION),
-      likes: getRandomInt(15, 200),
+      // likes: getRandomInt(15, 200),
+      likes: getRandomInt(MIN_INT, MAX_INT),
       comments: generateRandomCommentsArray(),
     };
     objectsArray.push(newObject);
