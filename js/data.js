@@ -66,7 +66,6 @@ const MAX_SMTH = 6;
 
 const generateRandomCommentsArray = function () {
   const commentsArray = [];
-  // const commentsCounter = getRandomInt(1, 6);
   const commentsCounter = getRandomInt(MIN_SMTH, MAX_SMTH);
   for (let i = 0; i < commentsCounter; i++) {
     const newComment = {
@@ -90,7 +89,6 @@ const generateObjectsArray = function () {
       id: i + 1,
       url: `photos/${i + 1}.jpg`,
       description: getRandomArrayEl(DESCPRIPTION),
-      // likes: getRandomInt(15, 200),
       likes: getRandomInt(MIN_INT, MAX_INT),
       comments: generateRandomCommentsArray(),
     };
