@@ -1,3 +1,5 @@
+import {getRandomInt,getRandomArrayEl} from './util.js';
+
 const SIMILLAR_OBJECTS_AMOUNT = 25;
 
 const COMMENTATOR_NAMES = [
@@ -38,7 +40,7 @@ const DESCPRIPTION = [
 export {SIMILLAR_OBJECTS_AMOUNT, COMMENTATOR_NAMES, COMMENTS, DESCPRIPTION};
 
 const getAvatarPath = function () {
-  return `img/avatar-${getRandomInt(MIN_SMTH, MAX_SMTH)}.svg`
+  return `img/avatar-${getRandomInt(1, 6)}.svg`
 };
 
 const getUniqId = function () {
