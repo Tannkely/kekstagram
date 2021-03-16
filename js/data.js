@@ -1,5 +1,4 @@
 import {getRandomInt,getRandomArrayEl} from './util.js';
-import {SIMILLAR_OBJECTS_AMOUNT, COMMENTATOR_NAMES, COMMENTS, DESCPRIPTION} from './const.js'
 
 const SIMILLAR_OBJECTS_AMOUNT = 25;
 
