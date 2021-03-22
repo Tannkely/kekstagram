@@ -16,12 +16,7 @@ const loadUserPhoto = () => {
     });
 
     if (/\.(jpe?g|png|gif)$/i.test(fileUpload.files[0].name) === false) {
-      showAlert('Это не картинка, попробуйте ещё раз');
-      closeModal();
-    }
-
-    if (fileUpload.files[0].size > 1000000) {
-      showAlert('Картинка весит больше 1МБ, выберите другую');
+      showAlert('Это не картинка, попробуйте снова');
       closeModal();
     }
 
@@ -36,4 +31,5 @@ const loadUserPhoto = () => {
     }
   });
 };
+
 loadUserPhoto();

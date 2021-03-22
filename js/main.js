@@ -1,6 +1,9 @@
 import './util.js';
-import './creating-user.js';
-import './creating-comment.js';
-import './get-many-user.js';
 import './pictures.js';
 import './big-pictures.js';
+import './editor.js';
+import './effects.js';
+import './validation.js';
+import './data.js';
+import './filter-posts.js';
+import './load-user-photo.js';

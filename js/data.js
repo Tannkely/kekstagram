@@ -18,5 +18,5 @@ fetch('https://22.javascript.pages.academy/kekstagram/data')
     });
   })
   .catch(() => {
-    showAlert('Не удалось получить посты с сервера. Попробуйте снова');
+    showAlert('Не удалось загрузить посты с сервера. Попробуйте ещё раз');
   });
