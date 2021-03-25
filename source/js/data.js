@@ -17,6 +17,7 @@ fetch('https://22.javascript.pages.academy/kekstagram/data')
       updatePictures();
     });
   })
+  
   .catch(() => {
     showAlert('Не удалось загрузить посты с сервера. Попробуйте ещё раз');
   });
