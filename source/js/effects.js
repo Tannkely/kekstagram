@@ -13,7 +13,7 @@ const Slider = {
 
 let lastClass = '';
 
-const effects = {
+const setEffects = {
   none: () => {
     imgUploadEffectsLevel.classList.add('visually-hidden')
     return 'none';
@@ -50,7 +50,7 @@ const onEffectsGroup = (evt) => {
     lastClass = currentClass;
 
     uploadPreviewImg.classList.add(currentClass);
-    uploadPreviewImg.style.filter = effects[currentClass.replace('effects__preview--', '')]();
+    uploadPreviewImg.style.filter = setEffects[currentClass.replace('effects__preview--', '')]();
   }
 };
 
@@ -68,7 +68,6 @@ window.noUiSlider.create(effectsLevelSlider, {
 effectsLevelSlider.noUiSlider.on('change', () => {
   effectLevelValue.value = effectsLevelSlider.noUiSlider.get();
 
-  uploadPreviewImg.style.filter = effects[lastClass.replace('effects__preview--', '')]();
+  uploadPreviewImg.style.filter = setEffects[lastClass.replace('effects__preview--', '')]();
 });
-
 export { effectLevelValue, imgUploadEffectsLevel };

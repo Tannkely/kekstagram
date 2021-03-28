@@ -1,10 +1,12 @@
-import { isEscape } from './util.js';
+import { isEscEvent } from './util.js';
+
+const QUANTITY_SYMBOLS = 20;
+const QUANTITY_HASHTAG = 5;
 
 const uploadImgModal = document.querySelector('.img-upload__overlay');
 const textHashtag = uploadImgModal.querySelector('.text__hashtags');
 const textDescription = uploadImgModal.querySelector('.text__description');
 
-//Hashtag validation
 const validateHashTag = (hashtag) => {
   const regexp = /^#\w{1,19}$/;
   const searchMatches = hashtag.match(regexp);
@@ -16,47 +18,49 @@ const validateHashTags = (str) => {
     textHashtag.setCustomValidity('');
     return true;
   }
+
   const hashTags = str
     .toLowerCase()
     .split(' ')
     .filter((words) => words.length !== 0);
 
-  for (let i = 0; i < hashTags.length; i++) {
-    const tag = hashTags[i];
+  let isValid = true;
 
-    if (!tag.startsWith('#')) {
-      textHashtag.setCustomValidity('Хэштег должен начинаться с символа #');
-      return false;
-    }
+  hashTags.forEach((index) => {
+    const tag = index;
 
-    if (tag.length > 20) {
-      textHashtag.setCustomValidity('Максимальная длина Хэштега 20 символов, включая решётку');
-      return false;
-    }
-
-    if (!validateHashTag(hashTags[i])) {
+    if (!validateHashTag(index)) {
       textHashtag.setCustomValidity(
         'Хэштег может состоять только из букв и чисел',
       );
-      return false;
+      isValid = false;
     }
-  }
+
+    if (tag.length > QUANTITY_SYMBOLS) {
+      textHashtag.setCustomValidity('Максимальная длина Хэштега - 20 символов, включая символ "#"');
+      isValid = false;
+    }
+
+    if (!tag.startsWith('#')) {
+      textHashtag.setCustomValidity('Хэшnег должен начинаться с символа "#"');
+      isValid = false;
+    }
+  });
 
   if (hashTags.length !== new Set(hashTags).size) {
-    textHashtag.setCustomValidity('Хэштеги не могут быть использованы дважды');
-    return false;
+    textHashtag.setCustomValidity('Хэшnеги не могут быть использованы дважды');
+    isValid = false;
   }
 
-  if (hashTags.length > 5) {
-    textHashtag.setCustomValidity('Нельзя указать больше пяти Хэштегов');
-    return false;
+  if (hashTags.length > QUANTITY_HASHTAG) {
+    textHashtag.setCustomValidity('Нельзя указать больше пяти Хэшnегов 5');
+    isValid = false;
   }
 
-  textHashtag.setCustomValidity('');
-  return true;
+  isValid && textHashtag.setCustomValidity('');
+  return isValid;
 };
 
-//Close by esc
 const onFieldForRecording = (evt) => {
   if (evt.key === 'Escape') {
     evt.preventDefault();
@@ -91,7 +95,7 @@ const showMessage = (messageType) => {
   };
 
   const onPopupEscKeydown = (evt) => {
-    if (isEscape(evt)) {
+    if (isEscEvent(evt)) {
       evt.preventDefault();
       closePopup();
     }
@@ -105,8 +109,10 @@ const showMessage = (messageType) => {
   };
 
   const onCloseClickOutside = (evt) => {
-    if (evt.target === messageType.querySelector('div')) return;
-    closePopup();
+    if (evt.target === messageType.querySelector('div')) {
+      closePopup();
+      return;
+    }
   };
 
   fillMessage();

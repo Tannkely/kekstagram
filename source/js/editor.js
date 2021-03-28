@@ -1,14 +1,16 @@
 import { showError, showSuccess, textHashtag, textDescription } from './validation.js';
+import { isEscEvent } from './util.js';
+
 const body = document.querySelector('body');
 const uploadImgModal = document.querySelector('.img-upload__overlay');
 const uploadFile = document.querySelector('#upload-file');
 const uploadImgModalClose = document.querySelector('#upload-cancel');
 
-// A window opens after downloading the file and the value of the form will change
 uploadFile.addEventListener('change', () => {
   resetSettings();
   uploadImgModal.classList.remove('hidden');
   body.classList.add('modal-open');
+  document.addEventListener('keydown', onEditorEscKeydown);
 });
 
 const closeModal = () => {
@@ -19,19 +21,20 @@ const closeModal = () => {
   textHashtag.value = '';
   textDescription.value = '';
   resetSettings();
+  document.removeEventListener('keydown', onEditorEscKeydown);
 };
 
 uploadImgModalClose.addEventListener('click', () => {
   closeModal();
 });
 
-document.addEventListener('keydown', (evt) => {
-  if (evt.key === ('Escape' || 'Esc')) {
+const onEditorEscKeydown = (evt) => {
+  if (isEscEvent(evt)) {
+    evt.preventDefault();
     closeModal();
   }
-});
+};
 
-// Image scaling
 const controlBigger = uploadImgModal.querySelector('.scale__control--bigger');
 const controlSmaller = uploadImgModal.querySelector('.scale__control--smaller');
 const controlValue = uploadImgModal.querySelector('.scale__control--value');

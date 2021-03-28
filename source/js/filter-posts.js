@@ -1,43 +1,74 @@
 import { drawUsersPictures } from './pictures.js';
+import { getArrayWithUniqueNumbers } from './util.js';
 
-const BIDE = 500;
 const RANDOM_PICTURES_QUANTITY = 10;
+const BIDE = 500;
+const FILTER_BUTTON_ACTIVE = 'img-filters__button--active';
 
-const imgFilter = document.querySelector('.img-filters');
-const imgFilterForm = document.querySelector('.img-filters__form');
+const setPictureFilter = (pictures) => {
+  const imgFilters = document.querySelector('.img-filters');
+  imgFilters.classList.remove('img-filters--inactive');
 
-const setDefaultPosts = (array) => array.slice();
-const setRandomPosts = (array) => _.shuffle(array).slice(0, RANDOM_PICTURES_QUANTITY);
-const setCommentsPosts = (array) => array.slice().sort((prev, next) => next.comments.length - prev.comments.length);
+  const filterDefault = document.querySelector('#filter-default');
+  const filterRandom = document.querySelector('#filter-random');
+  const filterDiscussed = document.querySelector('#filter-discussed');
 
-const updateFilter = (array) => {
+  const renderedPicturesByDefaultCopy = Object.assign([], pictures);
 
-  const filterTypes = {
-    'filter-default': setDefaultPosts(array),
-    'filter-random': setRandomPosts(array),
-    'filter-discussed': setCommentsPosts(array),
+  const sortByDefault = () => {
+    clearPictures();
+    drawUsersPictures(renderedPicturesByDefaultCopy);
+    clearActiveFilter();
+    filterDefault.classList.add(FILTER_BUTTON_ACTIVE);
   };
 
-  let filterType = filterTypes[imgFilter.querySelector('.img-filters__button--active').id];
-  return filterType;
-}
+  const sortByRandom = () => {
+    const sortRandomPictures = [];
+    const uniqueNumbersArray = getArrayWithUniqueNumbers(pictures.length);
 
-const updatePictures = () => {
-  document.querySelectorAll('.picture').forEach(element => element.remove());
-};
-
-const onFilterClick = (evt, posts) => {
-  if (!evt.target.classList.contains('img-filters__button')) {
-    return;
-  } else {
-    let activeElement = evt.target.parentElement.querySelector('.img-filters__button--active');
-    if (activeElement) {
-      activeElement.classList.remove('img-filters__button--active');
+    for (let i = 0; i < uniqueNumbersArray.length; i++) {
+      if (i < RANDOM_PICTURES_QUANTITY) {
+        let current = uniqueNumbersArray[i] - 1;
+        sortRandomPictures.push(renderedPicturesByDefaultCopy[current])
+      }
     }
-    evt.target.classList.add('img-filters__button--active');
-    const debounceRender = _.debounce(drawUsersPictures, BIDE);
-    debounceRender(updateFilter(posts));
-  }
+
+    clearPictures();
+    drawUsersPictures(sortRandomPictures);
+    clearActiveFilter();
+    filterRandom.classList.add(FILTER_BUTTON_ACTIVE);
+  };
+
+  const sortByDiscussed = () => {
+    const sortByCommentsPictures = Object.assign([], renderedPicturesByDefaultCopy);
+
+    sortByCommentsPictures.sort(function (a, b) {
+      return b.comments.length - a.comments.length;
+    });
+
+    clearPictures();
+    drawUsersPictures(sortByCommentsPictures);
+    clearActiveFilter();
+    filterDiscussed.classList.add(FILTER_BUTTON_ACTIVE);
+  };
+
+  filterDefault.addEventListener('click', _.debounce(sortByDefault, BIDE), true);
+  filterRandom.addEventListener('click', _.debounce(sortByRandom, BIDE), true);
+  filterDiscussed.addEventListener('click', _.debounce(sortByDiscussed, BIDE), true);
+
+  const clearPictures = () => {
+    const allPicturesList = document.querySelectorAll('.picture');
+    for (let picture of allPicturesList) {
+      picture.remove();
+    }
+  };
+
+  const clearActiveFilter = () => {
+    const imgFilters = document.querySelectorAll('.img-filters__button');
+    for (let button of imgFilters) {
+      button.classList.remove(FILTER_BUTTON_ACTIVE)
+    }
+  };
 };
 
-export { imgFilter, imgFilterForm, updatePictures, onFilterClick }
+export { setPictureFilter }

@@ -1,9 +1,14 @@
 import './util.js';
-import './pictures.js';
+import { getData } from './data.js';
+import { drawUsersPictures } from './pictures.js';
 import './big-pictures.js';
 import './editor.js';
 import './effects.js';
 import './validation.js';
-import './data.js';
-import './filter-posts.js';
+import { setPictureFilter } from './filter-posts.js';
 import './load-user-photo.js';
+
+getData((pictures) => {
+  drawUsersPictures(pictures);
+  setPictureFilter(pictures);
+});

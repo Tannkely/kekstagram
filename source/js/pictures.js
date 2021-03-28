@@ -1,27 +1,36 @@
-const picture = document.querySelector('#picture');
+import { showBigPicture } from './big-pictures.js';
+
 const pictures = document.querySelector('.pictures');
-import { setClickEvts, setData } from './big-pictures.js';
+const picture = document.querySelector('#picture').content;
+const picturesFragment = document.createDocumentFragment();
+const bodyOff = document.querySelector('body');
 
-const drawUsersPictures = (allUsers) => {
-  for (let i = 0; i < allUsers.length; i++) {
-    const pictureLinkClone = picture.content.cloneNode(true);
-    const pictureImage = pictureLinkClone.querySelector('.picture__img');
-    const pictureInfo = pictureLinkClone.querySelector('.picture__info');
-    const pictureComments = pictureInfo.querySelector('.picture__comments');
-    const pictureLikes = pictureInfo.querySelector('.picture__likes');
+const drawUsersPictures = (images) => {
+  images.forEach(({ id, url, likes, comments }) => {
+    const pictureLinkClone = picture.cloneNode(true);
 
-    pictureImage.setAttribute('src', allUsers[i].url);
-    pictureImage.setAttribute('id', 'pim-' + allUsers[i].id);
-    pictureInfo.setAttribute('id', 'pin-' + allUsers[i].id);
-    pictureComments.setAttribute('id', 'pli-' + allUsers[i].id);
-    pictureLikes.setAttribute('id', 'pco-' + allUsers[i].id);
-    pictureImage.setAttribute('alt', allUsers[i].description);
-    pictureLikes.textContent = allUsers[i].likes;
-    pictureComments.textContent = allUsers[i].comments.length;
-    pictures.appendChild(pictureLinkClone);
-  }
-  setData(allUsers);
-  setClickEvts();
+    pictureLinkClone.querySelector('a').id = `image${id}`;
+    pictureLinkClone.querySelector('.picture__img').src = url;
+    pictureLinkClone.querySelector('.picture__likes').textContent = likes;
+    pictureLinkClone.querySelector('.picture__comments').textContent =
+      comments.length;
+    picturesFragment.appendChild(pictureLinkClone);
+  });
+
+  pictures.appendChild(picturesFragment);
+
+  document.querySelector('.pictures').addEventListener('click', (evt) => {
+    const pictureElement = evt.target.closest('.picture');
+
+    if (pictureElement) {
+      const image = images.find(
+        (element) => `image${element.id}` === pictureElement.id,
+      );
+      showBigPicture(image);
+
+      bodyOff.classList.add('modal-open');
+    }
+  });
 };
 
-export { pictures, drawUsersPictures };
+export { drawUsersPictures };
