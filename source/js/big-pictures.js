@@ -1,7 +1,6 @@
 import {isEscEvent, clearElementInner} from './util.js';
 
 const OPEN_COMMENTS_DELAY = 300;
-
 const pageBody = document.querySelector('body');
 const socialCommentCount = document.querySelector('.social__comment-count');
 const bigPictureModal = document.querySelector('.big-picture');
