@@ -1,14 +1,19 @@
-import './util.js';
-import { getData } from './data.js';
-import { drawUsersPictures } from './pictures.js';
+import './upload-img.js';
 import './big-pictures.js';
-import './editor.js';
-import './effects.js';
+import './pictures.js';
+import './img-size-control.js';
+import './filter-posts.js';
 import './validation.js';
-import { setPictureFilter } from './filter-posts.js';
-import './load-user-photo.js';
+import {saveData} from './sort.js' ;
+import {initSortMode, renderImages} from './pictures.js';
+import {loadServerData} from './data.js';
+import {showAlert} from './util.js';
 
-getData((pictures) => {
-  drawUsersPictures(pictures);
-  setPictureFilter(pictures);
+loadServerData.then(
+  (getData) => { return renderImages(getData); },
+  (err) => { showAlert(err);} ).then(
+  (viewData) => {
+    return saveData(viewData);
+  }).then(() => {
+  initSortMode();
 });

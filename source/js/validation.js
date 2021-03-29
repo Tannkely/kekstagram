@@ -1,129 +1,98 @@
-import { isEscEvent } from './util.js';
+let cancelCloseModal = false;
 
-const QUANTITY_SYMBOLS = 20;
-const QUANTITY_HASHTAG = 5;
+const isEscCloseEnable = () => {
+  return !cancelCloseModal;
+}
 
-const uploadImgModal = document.querySelector('.img-upload__overlay');
-const textHashtag = uploadImgModal.querySelector('.text__hashtags');
-const textDescription = uploadImgModal.querySelector('.text__description');
+const checkFirstStep = (hashTagObject, PreviousHashtagText) => {
+  hashTagObject.value = hashTagObject.value.replace(/ {2,}/g,' ');
+  hashTagObject.value = hashTagObject.value.replace(/#{2,}/g,'#');
+  hashTagObject.value = hashTagObject.value.replace(/(\w)#/g,'$1 #');
+  if (hashTagObject.value.match(/([^#\sa-zA-Zа-яА-Я0-9]+)/)) {
+    hashTagObject.setCustomValidity('Недопустимый символ\n');
+    hashTagObject.value = PreviousHashtagText;
+  }
+  if (hashTagObject.value[0] !== '#' && hashTagObject.value.length > 0) {
+    hashTagObject.value = '#'+hashTagObject.value;
+  }
+  return hashTagObject.value;
+}
 
-const validateHashTag = (hashtag) => {
-  const regexp = /^#\w{1,19}$/;
-  const searchMatches = hashtag.match(regexp);
-  return searchMatches !== null;
+const checkValidHashStartCharacter = (hashTagForVerify) => {
+  return (
+    hashTagForVerify.match(/#([a-zA-Zа-яА-Я0-9]+)(?=(\s)|$)/g).length !==
+    hashTagForVerify.match(/([a-zA-Zа-яА-Я0-9]+)(?=(\s)|$)/g).length
+  ) ? 'Добавьте # в начале каждого хештега! ' : '';
+}
+
+const checkValidHashMinimumCharacter = (hashTagForVerify) => {
+  return (
+    hashTagForVerify.match(/#([a-zA-Zа-яА-Я0-9]{1,100})(?=(\s)|$)/g).length !==
+    hashTagForVerify.match(/#([a-zA-Zа-яА-Я0-9]{0,100})(?=(\s)|$)/g).length
+  ) ? 'Хеш-тег не может состоять только из одной решётки! ' : '';
+}
+
+const checkValidHashMaximumCharacter = (hashTagForVerify) => {
+  return (
+    (hashTagForVerify.length > 20 && hashTagForVerify.match(/#([a-zA-Zа-яА-Я0-9]+)(?=(\s)|$)/g).length === 1) ||
+    (hashTagForVerify.match(/#([a-zA-Zа-яА-Я0-9]{1,19})(?=(\s)|$)/g).length !==
+      hashTagForVerify.match(/#([a-zA-Zа-яА-Я0-9]+)(?=(\s)|$)/g).length)
+  ) ? 'Длина хэш-тега должна быть не более 20 символов! ' : '';
+}
+
+const checkValidUniqueAndCount = (hashTagForVerify) => {
+  const hashtagsFromInput = hashTagForVerify.toLowerCase().match( /#([a-zA-Zа-яА-Я0-9]+)(?=(\s)|$)/g ) ;
+  const uniqueHashtags = new Set(hashtagsFromInput);
+  return (
+    ((hashtagsFromInput.length !== uniqueHashtags.size) ? 'Один и тот же хэштег не может быть использован дважды.' : '')+
+    ((uniqueHashtags.size > 5)  ? 'Нельзя указать больше пяти хэштегов.' : '')+
+    ((uniqueHashtags[1] === ' ' ) ? 'Хештег не может состоять только из одной решётки.' : '')
+  ) ;
+}
+
+const checkSecondStep = (hashTagForVerify) => {
+  return (
+    checkValidHashStartCharacter(hashTagForVerify).toString()+
+    checkValidHashMinimumCharacter(hashTagForVerify).toString()+
+    checkValidHashMaximumCharacter(hashTagForVerify).toString()+
+    checkValidUniqueAndCount(hashTagForVerify).toString());
+}
+
+const initFocusHandler = (formForInit) => {
+  formForInit.querySelector('.text__description').addEventListener('focus', () => { cancelCloseModal = true; });
+  formForInit.querySelector('.text__description').addEventListener('blur', () => { cancelCloseModal = false; });
+  formForInit.querySelector('.text__hashtags').addEventListener('focus', () => { cancelCloseModal = true; });
+  formForInit.querySelector('.text__hashtags').addEventListener('blur', () => { cancelCloseModal = false; });
 };
 
-const validateHashTags = (str) => {
-  if (str.trim().length === 0) {
-    textHashtag.setCustomValidity('');
-    return true;
-  }
+const initValidator = (imgUploadForm = document.querySelector('.img-upload__form')) => {
+  let PreviousInputHashtags = '';
+  const imgUploadHashtags = imgUploadForm.querySelector('.text__hashtags');
 
-  const hashTags = str
-    .toLowerCase()
-    .split(' ')
-    .filter((words) => words.length !== 0);
+  initFocusHandler(imgUploadForm);
 
-  let isValid = true;
-
-  hashTags.forEach((index) => {
-    const tag = index;
-
-    if (!validateHashTag(index)) {
-      textHashtag.setCustomValidity(
-        'Хэштег может состоять только из букв и чисел',
-      );
-      isValid = false;
-    }
-
-    if (tag.length > QUANTITY_SYMBOLS) {
-      textHashtag.setCustomValidity('Максимальная длина Хэштега - 20 символов, включая символ "#"');
-      isValid = false;
-    }
-
-    if (!tag.startsWith('#')) {
-      textHashtag.setCustomValidity('Хэшnег должен начинаться с символа "#"');
-      isValid = false;
-    }
+  imgUploadForm.querySelector('.img-upload__submit').addEventListener('click', () => {
+    if (!imgUploadHashtags.checkValidity()) { imgUploadHashtags.style.border = '5px solid red'; }
   });
 
-  if (hashTags.length !== new Set(hashTags).size) {
-    textHashtag.setCustomValidity('Хэшnеги не могут быть использованы дважды');
-    isValid = false;
-  }
-
-  if (hashTags.length > QUANTITY_HASHTAG) {
-    textHashtag.setCustomValidity('Нельзя указать больше пяти Хэшnегов 5');
-    isValid = false;
-  }
-
-  isValid && textHashtag.setCustomValidity('');
-  return isValid;
-};
-
-const onFieldForRecording = (evt) => {
-  if (evt.key === 'Escape') {
-    evt.preventDefault();
-    evt.stopPropagation();
-  }
-};
-
-textHashtag.addEventListener('keydown', onFieldForRecording);
-textDescription.addEventListener('keydown', onFieldForRecording);
-
-textHashtag.addEventListener('input', () => {
-  if (!validateHashTags(textHashtag.value)) {
-    textHashtag.reportValidity();
-  }
-});
-
-const mainBlock = document.querySelector('main');
-
-const MessageType = {
-  SUCCESS: document.querySelector('#success').content.querySelector('.success').cloneNode(true),
-  ERROR: document.querySelector('#error').content.querySelector('.error').cloneNode(true),
-};
-
-const showMessage = (messageType) => {
-  const buttonClosePopup = messageType.querySelector('button');
-
-  const fillMessage = () => {
-    mainBlock.appendChild(messageType);
-    buttonClosePopup.addEventListener('click', closePopup);
-    document.addEventListener('keydown', onPopupEscKeydown);
-    mainBlock.addEventListener('click', onCloseClickOutside);
-  };
-
-  const onPopupEscKeydown = (evt) => {
-    if (isEscEvent(evt)) {
-      evt.preventDefault();
-      closePopup();
+  imgUploadHashtags.addEventListener('input', () => {
+    imgUploadHashtags.style.border = 'none';
+    imgUploadHashtags.setCustomValidity('');
+    PreviousInputHashtags = checkFirstStep(imgUploadHashtags, PreviousInputHashtags) ;
+    if (imgUploadHashtags.value.length > 2) {
+      imgUploadHashtags.setCustomValidity(checkSecondStep(imgUploadHashtags.value));
     }
-  };
+    imgUploadHashtags.reportValidity();
+  });
+}
 
-  const closePopup = () => {
-    mainBlock.removeChild(messageType);
-    document.removeEventListener('keydown', onPopupEscKeydown);
-    mainBlock.removeEventListener('click', onCloseClickOutside);
-    buttonClosePopup.removeEventListener('click', closePopup);
-  };
+const clearUploadText = () => {
+  document.querySelector('.img-upload__form .text__hashtags').setCustomValidity('');
+  document.querySelector('.img-upload__form .text__hashtags').style.border = 'none';
+  document.querySelector('.img-upload__form').querySelector('.text__hashtags').value = '';
+  document.querySelector('.img-upload__form').querySelector('.text__description').value = '';
+}
 
-  const onCloseClickOutside = (evt) => {
-    if (evt.target === messageType.querySelector('div')) {
-      closePopup();
-      return;
-    }
-  };
+initValidator();
 
-  fillMessage();
-};
-
-const showError = () => {
-  showMessage(MessageType.ERROR);
-};
-
-const showSuccess = () => {
-  showMessage(MessageType.SUCCESS);
-};
-
-export { showError, showSuccess, textHashtag, textDescription };
+export {clearUploadText, isEscCloseEnable, initValidator};

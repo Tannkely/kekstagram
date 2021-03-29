@@ -1,15 +1,33 @@
-import { showAlert } from './util.js';
-const getData = (onSuccess) => {
+const loadServerData = new Promise((resolve, reject) => {
   fetch('https://22.javascript.pages.academy/kekstagram/data')
     .then((response) => {
-      return response.json();
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(`${response.status} ${response.statusText}`);
     })
-    .then((posts) => {
-      onSuccess(posts);
+    .then((photos) => {
+      resolve(photos);
     })
-    .catch(() => {
-      showAlert('Не удалось получить посты с сервера. Попробуйте ещё раз');
+    .catch((err) => {
+      reject(err);
     });
-}
+});
 
-export { getData };
+const sendDataOnServer = (onSuccess, onFail, formData) => {
+  fetch('https://22.javascript.pages.academy/kekstagram',
+    {
+      method: 'POST',
+      body: formData,
+    },
+  )
+    .then((response) => {
+      if (response.ok) {
+        onSuccess();
+      } else {
+        onFail('Не удалось отправить форму. Попробуйте ещё раз');
+      }
+    });
+};
+
+export {loadServerData, sendDataOnServer};

@@ -1,74 +1,143 @@
-import { drawUsersPictures } from './pictures.js';
-import { getArrayWithUniqueNumbers } from './util.js';
+import {initSizeButtons} from './img-size-control.js';
 
-const RANDOM_PICTURES_QUANTITY = 10;
-const BIDE = 500;
-const FILTER_BUTTON_ACTIVE = 'img-filters__button--active';
+const initSliderOptions = (allElements = true) => {
+  const sliderOptions = [];
 
-const setPictureFilter = (pictures) => {
-  const imgFilters = document.querySelector('.img-filters');
-  imgFilters.classList.remove('img-filters--inactive');
-
-  const filterDefault = document.querySelector('#filter-default');
-  const filterRandom = document.querySelector('#filter-random');
-  const filterDiscussed = document.querySelector('#filter-discussed');
-
-  const renderedPicturesByDefaultCopy = Object.assign([], pictures);
-
-  const sortByDefault = () => {
-    clearPictures();
-    drawUsersPictures(renderedPicturesByDefaultCopy);
-    clearActiveFilter();
-    filterDefault.classList.add(FILTER_BUTTON_ACTIVE);
+  sliderOptions['none'] = {
+    effect : 'none',
+    sliderOptions : {
+      range: {
+        min: 0,
+        max: 1,
+      },
+      start: 0,
+      step: 0.1,
+      connect: 'lower',
+    },
   };
 
-  const sortByRandom = () => {
-    const sortRandomPictures = [];
-    const uniqueNumbersArray = getArrayWithUniqueNumbers(pictures.length);
+  sliderOptions['chrome'] = {
+    effect : 'grayscale',
+    sliderOptions : {
+      range: {
+        min: 0,
+        max: 1,
+      },
+      start: 1,
+      step: 0.1,
+    },
+  };
 
-    for (let i = 0; i < uniqueNumbersArray.length; i++) {
-      if (i < RANDOM_PICTURES_QUANTITY) {
-        let current = uniqueNumbersArray[i] - 1;
-        sortRandomPictures.push(renderedPicturesByDefaultCopy[current])
-      }
+  sliderOptions['sepia'] = {
+    effect : 'sepia',
+    sliderOptions : {
+      range: {
+        min: 0,
+        max: 1,
+      },
+      start: 1,
+      step: 0.1,
+    },
+  };
+
+  sliderOptions['marvin'] = {
+    effect : 'invert',
+    sliderOptions : {
+      range: {
+        min: 0,
+        max: 100,
+      },
+      start: 100,
+      step: 1,
+    },
+  };
+
+  sliderOptions['phobos'] = {
+    effect : 'blur',
+    sliderOptions : {
+      range: {
+        min: 0,
+        max: 3,
+      },
+      start: 3,
+      step: 0.1,
+    },
+  };
+
+  sliderOptions['heat'] = {
+    effect : 'brightness',
+    sliderOptions : {
+      range: {
+        min: 1,
+        max: 3,
+      },
+      start: 3,
+      step: 0.1,
+    },
+  };
+
+  return allElements ? sliderOptions : sliderOptions[allElements];
+}
+
+const getRightUnits = (currentEffect) => {
+  return (currentEffect === 'invert') ? '%' : ( (currentEffect === 'blur') ? 'px' : '' );
+}
+
+const getRightFilterString = (currentValue, currentEffect) => {
+  return currentEffect === 'none'? currentEffect : currentEffect +'('+ currentValue + getRightUnits(currentEffect)+')';
+}
+
+const resetFilter = (imgUploadPreviewElementForReset = document.querySelector('.img-upload__preview')) => {
+  if (imgUploadPreviewElementForReset) {
+    imgUploadPreviewElementForReset.name = initSliderOptions('none').effect ;
+    imgUploadPreviewElementForReset.querySelector('img').style.filter = 'effects__preview--none';
+    imgUploadPreviewElementForReset.querySelector('img').removeAttribute('class');
+    imgUploadPreviewElementForReset.querySelector('img').classList.add(initSliderOptions('none').effect);
+  }
+  document.querySelector('.effect-level__value').step = 0.1;
+  document.querySelector('.img-upload__effect-level').style.display = 'none';
+  if (document.querySelector('.effect-level__slider').noUiSlider) {
+    document.querySelector('.effect-level__slider').noUiSlider.destroy();
+  }
+  initSizeButtons();
+}
+
+const initFilter = (imgUploadPreviewElement = document.querySelector('.img-upload__preview')) => {
+  const sliderElement = document.querySelector('.effect-level__slider');
+  const sliderOptions = initSliderOptions();
+  resetFilter();
+  if (!sliderElement.noUiSlider) {
+    noUiSlider.create(sliderElement, sliderOptions['none'].sliderOptions);
+  }
+
+  const onSelectEffectButtonClick = (evt) => {
+    imgUploadPreviewElement.querySelector('img').removeAttribute('class');
+    imgUploadPreviewElement.querySelector('img').classList.add('effects__preview--'+evt.target.value);
+    if (evt.target.value === 'none') {
+      document.querySelector('.img-upload__effect-level').style.display = 'none';
+    } else {
+      document.querySelector('.img-upload__effect-level').style.display = 'block';
     }
+    sliderElement.noUiSlider.updateOptions(sliderOptions[evt.target.value].sliderOptions);
+    sliderElement.noUiSlider.set(sliderOptions[evt.target.value].sliderOptions.start);
+    imgUploadPreviewElement.name = sliderOptions[evt.target.value].effect;
+    imgUploadPreviewElement.querySelector('img').style.filter= getRightFilterString(
+      sliderOptions[evt.target.value].sliderOptions.start,
+      sliderOptions[evt.target.value].effect);
+  }
+  document.querySelectorAll('.effects__radio').forEach((effectOneItem) => {
+    effectOneItem.removeEventListener('click' , onSelectEffectButtonClick,true );
+  });
+  document.querySelectorAll('.effects__radio').forEach((effectOneItem) => {
+    effectOneItem.addEventListener('click' , onSelectEffectButtonClick, true );
+  });
 
-    clearPictures();
-    drawUsersPictures(sortRandomPictures);
-    clearActiveFilter();
-    filterRandom.classList.add(FILTER_BUTTON_ACTIVE);
-  };
+  sliderElement.noUiSlider.on('update', (_, handle, unencoded) => {
+    document.querySelector('.effect-level__value').value = unencoded[handle];
+    imgUploadPreviewElement.querySelector('img').style.filter = getRightFilterString(
+      unencoded[handle],
+      imgUploadPreviewElement.name );
+  });
+}
 
-  const sortByDiscussed = () => {
-    const sortByCommentsPictures = Object.assign([], renderedPicturesByDefaultCopy);
-
-    sortByCommentsPictures.sort(function (a, b) {
-      return b.comments.length - a.comments.length;
-    });
-
-    clearPictures();
-    drawUsersPictures(sortByCommentsPictures);
-    clearActiveFilter();
-    filterDiscussed.classList.add(FILTER_BUTTON_ACTIVE);
-  };
-
-  filterDefault.addEventListener('click', _.debounce(sortByDefault, BIDE), true);
-  filterRandom.addEventListener('click', _.debounce(sortByRandom, BIDE), true);
-  filterDiscussed.addEventListener('click', _.debounce(sortByDiscussed, BIDE), true);
-
-  const clearPictures = () => {
-    const allPicturesList = document.querySelectorAll('.picture');
-    for (let picture of allPicturesList) {
-      picture.remove();
-    }
-  };
-
-  const clearActiveFilter = () => {
-    const imgFilters = document.querySelectorAll('.img-filters__button');
-    for (let button of imgFilters) {
-      button.classList.remove(FILTER_BUTTON_ACTIVE)
-    }
-  };
-};
-
-export { setPictureFilter }
+export {initFilter, resetFilter};
