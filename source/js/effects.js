@@ -15,7 +15,7 @@ let lastClass = '';
 
 const setEffects = {
   none: () => {
-    imgUploadEffectsLevel.classList.add('visually-hidden')
+    imgUploadEffectsLevel.classList.add('visually-hidden');
     return 'none';
   },
   chrome: () => {

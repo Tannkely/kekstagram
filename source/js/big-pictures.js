@@ -64,9 +64,9 @@ const showBigPicture = ({ url, likes, comments, description }) => {
   }
 };
 
-const showComments = (n) => {
+const showComments = (count) => {
   const hiddenComments = document.querySelectorAll('.social__comment.hidden');
-  const initialComments = Array.prototype.slice.call(hiddenComments).slice(0, n);
+  const initialComments = Array.prototype.slice.call(hiddenComments).slice(0, count);
 
   initialComments.forEach((comment) => {
     comment.classList.remove('hidden');

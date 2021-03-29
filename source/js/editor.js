@@ -5,6 +5,10 @@ const body = document.querySelector('body');
 const uploadImgModal = document.querySelector('.img-upload__overlay');
 const uploadFile = document.querySelector('#upload-file');
 const uploadImgModalClose = document.querySelector('#upload-cancel');
+const controlBigger = uploadImgModal.querySelector('.scale__control--bigger');
+const controlSmaller = uploadImgModal.querySelector('.scale__control--smaller');
+const controlValue = uploadImgModal.querySelector('.scale__control--value');
+const uloadImagePreview = uploadImgModal.querySelector('.img-upload__preview > img');
 
 uploadFile.addEventListener('change', () => {
   resetSettings();
@@ -14,7 +18,6 @@ uploadFile.addEventListener('change', () => {
 });
 
 const closeModal = () => {
-  document.querySelector('.effects__preview').click();
   uploadImgModal.classList.add('hidden');
   body.classList.remove('modal-open');
   uploadFile.value = '';
@@ -34,11 +37,6 @@ const onEditorEscKeydown = (evt) => {
     closeModal();
   }
 };
-
-const controlBigger = uploadImgModal.querySelector('.scale__control--bigger');
-const controlSmaller = uploadImgModal.querySelector('.scale__control--smaller');
-const controlValue = uploadImgModal.querySelector('.scale__control--value');
-const uloadImagePreview = uploadImgModal.querySelector('.img-upload__preview > img');
 
 const Scale = {
   MAX: 100,
