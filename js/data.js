@@ -1,6 +1,6 @@
 import {getRandomInt,getRandomArrayEl} from './util.js';
 
-const SIMILLAR_OBJECTS_AMOUNT = 25;
+const SIMILLAR_OBJECT_AMOUNT = 25;
 
 const COMMENTATOR_NAMES = [
   'Николай',
@@ -52,12 +52,12 @@ const getUniqId = function () {
   return rand;
 }
 
-const getActualCommentsStrings = function () {
-  const actualCommentsStrings = [];
+const getActualCommentString = function () {
+  const actualCommentString = [];
   for(let i = 0;i < getRandomInt(1, 2); i++ ) {
-    actualCommentsStrings.push(COMMENTS[getRandomInt(0, COMMENTS.length-1)])}
-  const actualComments = actualCommentsStrings.join(' ');
-  return actualComments;
+    actualCommentString.push(COMMENTS[getRandomInt(0, COMMENTS.length-1)])}
+  const actualComment = actualCommentString.join(' ');
+  return actualComment;
 };
 
 const MIN_SMTH = 1;
@@ -65,12 +65,12 @@ const MAX_SMTH = 6;
 
 const generateRandomCommentsArray = function () {
   const commentsArray = [];
-  const commentsCounter = getRandomInt(MIN_SMTH, MAX_SMTH);
-  for (let i = 0; i < commentsCounter; i++) {
+  const commentCounter = getRandomInt(MIN_SMTH, MAX_SMTH);
+  for (let i = 0; i < commentCounter; i++) {
     const newComment = {
       id: getUniqId(),
       avatar: getAvatarPath(),
-      message: getActualCommentsStrings(),
+      message: getActualCommentString(),
       name : getRandomArrayEl(COMMENTATOR_NAMES),
     };
     commentsArray.push(newComment);

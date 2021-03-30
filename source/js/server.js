@@ -1,40 +1,32 @@
+import {SERVER_GET_URL, SERVER_SEND_URL} from './constants.js';
 
-const uploadErrorMessage = 'Не удалось отправить форму. Попробуйте еще раз';
-const loadErrorMessage = 'Отсутствует связь с сервером. Попробуйте позже';
-
-import {showAlert} from './success.js'
-
-const load = function(onSuccess) {
-  fetch('https://22.javascript.pages.academy/kekstagram/data')
-    .then((response) => response.json())
-    .then((data) => {
-      onSuccess(data);
-    })
-    .catch(() => {
-      showAlert(loadErrorMessage);
-    });
-};
-
-const upload = function(onSuccess, onError, evt) {
-  const formData = new FormData(evt.target);
-  evt.preventDefault();
-  fetch(
-    'https://22.javascript.pages.academy/kekstagram',
+const sendServerData = (body) => {
+  return fetch(
+    SERVER_SEND_URL,
     {
       method: 'POST',
-      body: formData,
+      body,
     },
   )
     .then((response) => {
-      if (response.ok){
-        onSuccess();
+      if (response.ok) {
+        return response.json();
       } else {
-        onError(uploadErrorMessage);
+        return Promise.reject();
       }
     })
-    .catch(()=> {
-      onError(uploadErrorMessage);
-    });
 };
 
-export {load, upload};
+const getServerData = () => {
+  return fetch(SERVER_GET_URL)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      else {
+        Promise.reject(`${response.status} ${response.statusText}`);
+      }
+    })
+};
+
+export {getServerData, sendServerData};
