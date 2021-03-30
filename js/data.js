@@ -37,7 +37,7 @@ const DESCPRIPTION = [
   'Тебе можно позавидовать',
 ];
 
-export {SIMILLAR_OBJECTS_AMOUNT, COMMENTATOR_NAMES, COMMENTS, DESCPRIPTION};
+export {SIMILLAR_OBJECT_AMOUNT, COMMENTATOR_NAMES, COMMENTS, DESCPRIPTION};
 
 const getAvatarPath = function () {
   return `img/avatar-${getRandomInt(1, 6)}.svg`
@@ -83,7 +83,7 @@ const MAX_INT = 200;
 
 const generateObjectsArray = function () {
   const objectsArray = [];
-  for (let i = 0; i < SIMILLAR_OBJECTS_AMOUNT; i++) {
+  for (let i = 0; i < SIMILLAR_OBJECT_AMOUNT; i++) {
     const newObject = {
       id: i + 1,
       url: `photos/${i + 1}.jpg`,
